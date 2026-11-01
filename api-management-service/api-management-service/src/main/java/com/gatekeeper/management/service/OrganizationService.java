@@ -3,6 +3,7 @@ package com.gatekeeper.management.service;
 
 import com.gatekeeper.management.Exception.ApiException;
 import com.gatekeeper.management.dto.OrganizationStatusRequest;
+import com.gatekeeper.management.dto.TenantOrganizationRequest;
 import com.gatekeeper.management.dto.organization.OrganizationRequest;
 import com.gatekeeper.management.dto.organization.OrganizationResponse;
 import com.gatekeeper.management.dto.tenantadmin.TenantAdminRequest;
@@ -15,7 +16,9 @@ import com.gatekeeper.management.repository.ManagementUserRepository;
 import com.gatekeeper.management.repository.OrganizationRepository;
 import com.gatekeeper.management.repository.RolesRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +34,7 @@ public class OrganizationService {
     private final ManagementUserRepository managementUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final RolesRepository roleRepository;
+    private final TenantContext tenantContext;
 
 
     // CRUD for organization
@@ -143,7 +147,7 @@ public class OrganizationService {
         return TenantAdminResponse.from(managementUserRepository.save(user));
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public TenantAdminResponse getTenantAdminById(Long organizationId){
         return TenantAdminResponse.from(getManagementUser(organizationId));
     }
@@ -215,4 +219,27 @@ public class OrganizationService {
             }
         }
     }
+
+    @Transactional(readOnly = true)
+    public OrganizationResponse getOwnOrganization(){
+
+        return OrganizationResponse.from(tenantContext.getOrganization());
+    }
+
+    @Transactional
+    public OrganizationResponse updateOwnOrganization(TenantOrganizationRequest request){
+
+        Organization organization = tenantContext.getOrganization();
+
+        if(organizationRepository.existsByNameIgnoreCase(request.getName()) &&
+                !organization.getName().equalsIgnoreCase(request.getName())){
+            throw new ApiException(HttpStatus.CONFLICT, "Organization name already exists");
+        }
+
+        organization.setName(request.getName());
+        organization.setUpdatedAt(LocalDateTime.now());
+
+        return OrganizationResponse.from(organization);
+    }
 }
+
