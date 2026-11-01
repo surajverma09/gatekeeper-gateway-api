@@ -49,13 +49,13 @@ public class AuthenticationService {
             throw new ApiException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
         }
 
-        if(user.getOrganizationId() != null && user.getOrganizationId().getStatus() != OrganizationStatus.ACTIVE){
+        if(user.getOrganization() != null && user.getOrganization().getStatus() != OrganizationStatus.ACTIVE){
             throw new ApiException(HttpStatus.FORBIDDEN, "The organization is not active");
         }
 
         Instant issuedAt = Instant.now();
-        String role = user.getRoleId().getName();
-        Long organizationId = user.getOrganizationId() == null ? null : user.getOrganizationId().getId();
+        String role = user.getRole().getName();
+        Long organizationId = user.getOrganization() == null ? null : user.getOrganization().getId();
 
 
         JwtClaimsSet.Builder Claims = JwtClaimsSet.builder()
