@@ -39,10 +39,12 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/health", "/api/auth/login").permitAll()
+
+                        .requestMatchers("/", "/index.html", "/styles.css", "/app.js", "/favicon.ico",
+                                "/health", "/api/auth/login").permitAll()
                         .requestMatchers("/api/platform/**").hasRole("PLATFORM_ADMIN")
                         .requestMatchers("/api/tenant/**").hasRole("TENANT_ADMIN")
-                        .requestMatchers("/api/gateway").hasRole("GATEWAY_SERVICE")
+                        .requestMatchers("/api/gateway/**").hasRole("GATEWAY_SERVICE")
                         .anyRequest().authenticated()
                 )
 
