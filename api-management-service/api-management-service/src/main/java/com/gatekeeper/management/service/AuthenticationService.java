@@ -45,7 +45,7 @@ public class AuthenticationService {
         ManagementUser user = managementUserRepository.findByUsername(loginRequest.getUsername())
                 .orElseThrow(()-> new ApiException(HttpStatus.NOT_FOUND, "User is not authenticated to login"));
 
-        if(!user.getEnabled() && passwordEncoder.matches(loginRequest.getPassword(), user.getPasswordHash())){
+        if(!user.getEnabled() || passwordEncoder.matches(loginRequest.getPassword(), user.getPasswordHash())){
             throw new ApiException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
         }
 

@@ -78,7 +78,7 @@ public class OrganizationService {
     public OrganizationResponse update(OrganizationRequest request, Long id){
         Long startedAt = System.nanoTime();
         Organization organization = getOrganization(id);
-        checkUnique(request.getName(), request.getName(), id);
+        checkUnique(request.getName(), request.getSlug(), id);
         organization.setName(request.getName());
         organization.setSlug(request.getSlug());
         organization.setUpdatedAt(LocalDateTime.now());
@@ -139,7 +139,7 @@ public class OrganizationService {
         Organization organization = getOrganization(organizationId);
 
         if(managementUserRepository.existsByOrganization_Id(organizationId)){
-            throw new ApiException(HttpStatus.CONFLICT, "Organization is already exist with this name");
+            throw new ApiException(HttpStatus.CONFLICT, "Organization already has a tenant administrator");
         }
 
         if(managementUserRepository.existsByUsername(req.getUsername())){
@@ -153,16 +153,20 @@ public class OrganizationService {
         ManagementUser user = new ManagementUser();
         user.setOrganization(organization);
         user.setRole(role);
-        user.setEnabled(true);
         user.setUsername(req.getUsername());
         user.setPasswordHash(passwordEncoder.encode(req.getPassword()));
+
+        user.setEnabled(true);
+
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
 
-        auditService.recordAudit(organization, "CREATE_TENANT_ADMIN", "MANAGEMENT_USER",
-                 user.getId().toString(), instantTime, "Tenant admin is created" );
+        ManagementUser savedUser = managementUserRepository.save(user);
 
-        return TenantAdminResponse.from(managementUserRepository.save(user));
+        auditService.recordAudit(organization, "CREATE_TENANT_ADMIN", "MANAGEMENT_USER",
+                 savedUser.getId().toString(), instantTime, "Tenant admin is created" );
+
+        return TenantAdminResponse.from(savedUser);
     }
 
     @Transactional(readOnly = true)
@@ -177,7 +181,9 @@ public class OrganizationService {
 
         user.setUsername(req.getUsername());
         user.setPasswordHash(passwordEncoder.encode(req.getPassword()));
-        user.setEnabled(true);
+        user.setEnabled(
+                req.getEnabled() == null || req.getEnabled()
+        );
         user.setUpdatedAt(LocalDateTime.now());
 
         auditService.recordAudit(user.getOrganization(), "UPDATE_TENANT_ADMIN", "TENANT_ADMIN",

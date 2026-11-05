@@ -190,7 +190,7 @@ public class RouteService {
 
 
         List<ControlPlaneAuditRecord> records = auditRecordRepository.
-                getAllAuditRecordsByOrganizationIdAndOrganizationIs(organization.getId(), OrganizationStatus.ACTIVE);
+                getAllAuditRecordsByOrganizationIdAndOrganization_status(organization.getId(), OrganizationStatus.ACTIVE);
 
         return records.stream().
                 map(AuditRecords -> AuditRecordResponse.from(AuditRecords)).toList();

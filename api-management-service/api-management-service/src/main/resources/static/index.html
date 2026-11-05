@@ -1,0 +1,647 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GateKeeper | API Gateway Platform</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<section id="loginView" class="login-layout">
+    <div class="brand-panel">
+        <div class="brand">
+            <div class="brand-icon">⬡</div>
+            <span>Gate<span class="brand-accent">Keeper</span></span>
+        </div>
+
+        <div class="brand-content">
+            <p class="eyebrow">API GATEWAY PLATFORM</p>
+            <h1>One control plane.<br><span>Every service</span> in its lane.</h1>
+            <p class="brand-description">
+                Define, secure, and monitor your APIs in one place.
+            </p>
+
+            <div class="feature-row">
+                <div>
+                    <span class="feature-icon">▦</span>
+                    <b>Manage</b>
+                    <small>Configure routes<br>and services</small>
+                </div>
+                <div>
+                    <span class="feature-icon">⬡</span>
+                    <b>Secure</b>
+                    <small>Enforce access<br>and rate limits</small>
+                </div>
+                <div>
+                    <span class="feature-icon">▥</span>
+                    <b>Monitor</b>
+                    <small>Track traffic<br>and performance</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="brand-footer">
+            GATEKEEPER · API MANAGEMENT
+        </div>
+    </div>
+
+    <div class="login-side">
+        <form id="loginForm" class="login-card">
+            <div class="login-logo">
+                ⬡ <span>Gate<span class="brand-accent">Keeper</span></span>
+            </div>
+
+            <h2>Welcome back</h2>
+            <p class="muted">Sign in to manage your API gateway.</p>
+
+            <label for="username">Username</label>
+            <input
+                    id="username"
+                    type="text"
+                    placeholder="Enter your username"
+                    autocomplete="username"
+                    required
+            >
+
+            <label for="password">Password</label>
+            <div class="password-field">
+                <input
+                        id="password"
+                        type="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                >
+                <button type="button" id="togglePassword">Show</button>
+            </div>
+
+            <p id="loginError" class="error-message hidden"></p>
+
+            <button
+                    id="loginButton"
+                    class="primary-button"
+                    type="submit"
+            >
+                Sign In →
+            </button>
+
+            <p class="login-note">
+                Login to access the <strong>GateKeeper</strong> dashboard.
+            </p>
+        </form>
+
+        <footer class="login-footer">
+            © 2026 GateKeeper. All rights reserved.
+        </footer>
+    </div>
+</section>
+
+
+<!-- DASHBOARD -->
+<section id="dashboardView" class="dashboard hidden">
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <span class="brand-icon">⬡</span>
+            <span>Gate<span class="brand-accent">Keeper</span></span>
+        </div>
+
+        <p class="nav-caption">WORKSPACE</p>
+        <nav id="mainNavigation"></nav>
+
+        <div class="sidebar-bottom">
+            <div class="user-profile">
+                <div class="avatar" id="userInitials">GK</div>
+
+                <div class="user-info">
+                    <strong id="sidebarUsername">User</strong>
+                    <small id="sidebarRole">Administrator</small>
+                </div>
+            </div>
+
+            <button id="logoutButton" class="logout-button">
+                ↪ Sign out
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-area">
+        <header class="topbar">
+            <button id="mobileMenuButton" class="mobile-menu">☰</button>
+
+            <div>
+                <p class="breadcrumb">
+                    GATEKEEPER /
+                    <span id="breadcrumbRole">WORKSPACE</span>
+                </p>
+                <h2 id="pageTitle">Overview</h2>
+            </div>
+
+            <div class="topbar-right">
+                <span class="role-badge" id="roleBadge">ADMIN</span>
+                <span class="status-dot"></span>
+                <span class="muted">Control plane</span>
+            </div>
+        </header>
+
+        <div class="content-area">
+
+            <section id="overviewSection" class="page-section"></section>
+
+            <!-- PLATFORM ADMIN: ORGANIZATIONS -->
+            <section id="organizationsSection" class="page-section hidden">
+
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">PLATFORM MANAGEMENT</p>
+                        <h1>Organizations</h1>
+                        <p class="muted">
+                            Manage tenants and their administrator accounts.
+                        </p>
+                    </div>
+
+                    <button
+                            id="createOrganizationButton"
+                            class="primary-button"
+                    >
+                        + New organization
+                    </button>
+                </div>
+
+                <div class="toolbar">
+                    <input
+                            id="organizationSearch"
+                            placeholder="Search organizations..."
+                    >
+
+                    <button
+                            id="refreshOrganizationsButton"
+                            class="secondary-button"
+                    >
+                        ↻ Refresh
+                    </button>
+                </div>
+
+                <div class="table-card">
+                    <div class="table-scroll">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>ORGANIZATION</th>
+                                <th>SLUG</th>
+                                <th>STATUS</th>
+                                <th>CREATED</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                            </thead>
+
+                            <tbody id="organizationsTableBody"></tbody>
+                        </table>
+                    </div>
+
+                    <p id="organizationsEmpty" class="empty-state hidden">
+                        No organizations found.
+                    </p>
+                </div>
+            </section>
+
+
+            <!-- TENANT ADMIN: ROUTES -->
+            <section id="routesSection" class="page-section hidden">
+
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">API CONFIGURATION</p>
+                        <h1>Routes</h1>
+                        <p class="muted">
+                            Configure paths, destinations, methods and policies.
+                        </p>
+                    </div>
+
+                    <button id="createRouteButton" class="primary-button">
+                        + Create route
+                    </button>
+                </div>
+
+                <div class="toolbar">
+                    <input id="routeSearch" placeholder="Search routes...">
+
+                    <button id="refreshRoutesButton" class="secondary-button">
+                        ↻ Refresh
+                    </button>
+                </div>
+
+                <div class="table-card">
+                    <div class="table-scroll">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>ROUTE</th>
+                                <th>PATH PATTERN</th>
+                                <th>POLICIES</th>
+                                <th>STATUS</th>
+                                <th>VERSION</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                            </thead>
+
+                            <tbody id="routesTableBody"></tbody>
+                        </table>
+                    </div>
+
+                    <p id="routesEmpty" class="empty-state hidden">
+                        No routes configured yet.
+                    </p>
+                </div>
+            </section>
+
+
+            <!-- TENANT ADMIN: ORGANIZATION PROFILE -->
+            <section
+                    id="organizationProfileSection"
+                    class="page-section hidden"
+            >
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">TENANT SETTINGS</p>
+                        <h1>My organization</h1>
+                        <p class="muted">
+                            View your organization's identity and status.
+                        </p>
+                    </div>
+                </div>
+
+                <div id="tenantOrganizationCard"></div>
+            </section>
+
+
+            <!-- TENANT ADMIN: AUDIT -->
+            <section id="auditSection" class="page-section hidden">
+
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">ACTIVITY & SECURITY</p>
+                        <h1>Audit records</h1>
+                        <p class="muted">
+                            Review recorded administrative activity.
+                        </p>
+                    </div>
+
+                    <button id="refreshAuditButton" class="secondary-button">
+                        ↻ Refresh
+                    </button>
+                </div>
+
+                <div class="table-card">
+                    <div class="table-scroll">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>ACTION</th>
+                                <th>RESOURCE</th>
+                                <th>ACTOR</th>
+                                <th>RESULT</th>
+                                <th>CORRELATION ID</th>
+                                <th>DATE</th>
+                            </tr>
+                            </thead>
+
+                            <tbody id="auditTableBody"></tbody>
+                        </table>
+                    </div>
+
+                    <p id="auditEmpty" class="empty-state hidden">
+                        No audit records found.
+                    </p>
+                </div>
+            </section>
+
+        </div>
+    </main>
+</section>
+
+
+<!-- ORGANIZATION DIALOG -->
+<dialog id="organizationDialog" class="app-dialog">
+    <form id="organizationForm">
+
+        <div class="dialog-heading">
+            <h2 id="organizationDialogTitle">New organization</h2>
+            <button type="button" class="close-dialog">×</button>
+        </div>
+
+        <input id="organizationId" type="hidden">
+
+        <label>Organization name</label>
+        <input id="organizationName" maxlength="150" required>
+
+        <label>Organization slug</label>
+        <input id="organizationSlug" maxlength="100" required>
+
+        <div class="dialog-actions">
+            <button
+                    type="button"
+                    class="secondary-button close-dialog"
+            >
+                Cancel
+            </button>
+
+            <button type="submit" class="primary-button">
+                Save organization
+            </button>
+        </div>
+
+    </form>
+</dialog>
+
+
+<!-- TENANT ADMIN DIALOG -->
+<dialog id="tenantAdminDialog" class="modal">
+
+    <div class="modal-content">
+
+        <!-- DIALOG HEADER -->
+        <div class="modal-header">
+
+            <div>
+                <span class="eyebrow">TENANT ACCESS</span>
+
+                <h2 id="tenantAdminDialogTitle">
+                    Tenant administrator
+                </h2>
+
+                <p id="tenantAdminOrganization" class="muted"></p>
+            </div>
+
+            <!-- CLOSE BUTTON -->
+            <button
+                    type="button"
+                    class="icon-button"
+                    id="closeTenantAdminDialog"
+                    aria-label="Close dialog"
+            >
+                &times;
+            </button>
+
+        </div>
+
+
+        <!-- TENANT ADMIN FORM -->
+        <form id="tenantAdminForm">
+
+            <!-- ORGANIZATION ID -->
+            <input
+                    type="hidden"
+                    id="tenantAdminOrganizationId"
+            >
+
+
+            <!-- USERNAME -->
+            <div class="form-group">
+
+                <label for="tenantAdminUsername">
+                    Username
+                </label>
+
+                <input
+                        type="text"
+                        id="tenantAdminUsername"
+                        placeholder="Enter username"
+                        maxlength="100"
+                        autocomplete="off"
+                        required
+                >
+
+            </div>
+
+
+            <!-- PASSWORD -->
+            <div class="form-group">
+
+                <label for="tenantAdminPassword">
+                    Password
+                </label>
+
+                <input
+                        type="password"
+                        id="tenantAdminPassword"
+                        placeholder="Enter a new password"
+                        maxlength="255"
+                        autocomplete="new-password"
+                        required
+                >
+
+            </div>
+
+
+            <!-- ACCOUNT ENABLED -->
+            <div class="admin-enabled-row">
+
+                <div>
+                    <strong>Account enabled</strong>
+
+                    <small>
+                        Disabled users cannot log in.
+                    </small>
+                </div>
+
+                <input
+                        type="checkbox"
+                        id="tenantAdminEnabled"
+                        checked
+                >
+
+            </div>
+
+
+            <!-- MODAL FOOTER -->
+            <div class="modal-actions">
+
+                <!-- DELETE BUTTON: HIDDEN DURING CREATION -->
+                <button
+                        type="button"
+                        id="deleteTenantAdminButton"
+                        class="btn-danger hidden"
+                >
+                    Delete administrator
+                </button>
+
+                <div class="modal-actions-right">
+
+                    <!-- CANCEL BUTTON -->
+                    <button
+                            type="button"
+                            id="cancelTenantAdminDialog"
+                            class="btn-secondary"
+                    >
+                        Cancel
+                    </button>
+
+                    <!-- SAVE BUTTON -->
+                    <button
+                            type="submit"
+                            id="saveTenantAdminButton"
+                            class="btn-primary"
+                    >
+                        Save administrator
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+</dialog>
+
+
+<!-- ROUTE DIALOG -->
+<dialog id="routeDialog" class="app-dialog wide-dialog">
+
+    <form id="routeForm">
+
+        <div class="dialog-heading">
+            <h2 id="routeDialogTitle">Create route</h2>
+            <button type="button" class="close-dialog">×</button>
+        </div>
+
+        <input id="routePk" type="hidden">
+
+        <div class="form-grid">
+
+            <div>
+                <label>Route ID</label>
+                <input id="routeId" required>
+            </div>
+
+            <div>
+                <label>Route name</label>
+                <input id="routeName" required>
+            </div>
+
+            <div>
+                <label>Path pattern</label>
+                <input
+                        id="routePathPattern"
+                        placeholder="/api/orders/**"
+                        required
+                >
+            </div>
+
+            <div>
+                <label>Target base URL</label>
+                <input
+                        id="routeTargetBaseUrl"
+                        placeholder="http://localhost:8092"
+                        required
+                >
+            </div>
+
+            <div>
+                <label>Target path prefix</label>
+                <input id="routeTargetPathPrefix" value="/">
+            </div>
+
+            <div>
+                <label>Requests per minute</label>
+                <input
+                        id="routeRequestsPerMinute"
+                        type="number"
+                        min="1"
+                >
+            </div>
+
+            <div>
+                <label>Response timeout (ms)</label>
+                <input
+                        id="routeResponseTimeout"
+                        type="number"
+                        min="1"
+                        value="3000"
+                        required
+                >
+            </div>
+
+            <div>
+                <label>Allowed methods</label>
+                <input
+                        id="routeAllowedMethods"
+                        value="GET"
+                        placeholder="GET, POST, PUT"
+                >
+            </div>
+
+        </div>
+
+        <div class="check-options">
+
+            <label class="check-label">
+                <input id="routeIdempotency" type="checkbox">
+                Enable idempotency
+            </label>
+
+            <label class="check-label">
+                <input id="routeActive" type="checkbox">
+                Route active
+            </label>
+
+        </div>
+
+        <div class="rule-heading">
+            <strong>Header rules</strong>
+
+            <button
+                    id="addHeaderRuleButton"
+                    type="button"
+                    class="secondary-button"
+            >
+                + Add rule
+            </button>
+        </div>
+
+        <div id="headerRulesContainer"></div>
+
+        <div class="dialog-actions">
+
+            <button
+                    type="button"
+                    class="secondary-button close-dialog"
+            >
+                Cancel
+            </button>
+
+            <button type="submit" class="primary-button">
+                Save route
+            </button>
+
+        </div>
+
+    </form>
+</dialog>
+
+
+<!-- ROUTE VERSIONS -->
+<dialog id="versionsDialog" class="app-dialog">
+
+    <div class="dialog-heading">
+        <h2 id="versionsDialogTitle">Route versions</h2>
+        <button type="button" class="close-dialog">×</button>
+    </div>
+
+    <div id="versionsTimeline"></div>
+
+</dialog>
+
+
+<!-- TOAST CONTAINER -->
+<div id="toastContainer" class="toast-container"></div>
+
+
+<!-- JAVASCRIPT -->
+<script src="app.js"></script>
+
+</body>
+</html>

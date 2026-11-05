@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface AuditRecordRepository extends JpaRepository<ControlPlaneAuditRecord, Long> {
 
-    List<ControlPlaneAuditRecord> getAllAuditRecordsByOrganizationIdAndOrganizationIs(Long organizationId, OrganizationStatus statusRequest);
+    List<ControlPlaneAuditRecord> getAllAuditRecordsByOrganizationIdAndOrganization_status(Long organizationId, OrganizationStatus statusRequest);
 }
